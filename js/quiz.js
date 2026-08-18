@@ -1,6 +1,8 @@
-/* Kid-friendly quiz engine: mcq, tf, fill, match. Every question must be
-   answered correctly (retries allowed) before the quiz counts as done and
-   the next section unlocks. */
+/* Kid-friendly quiz engine: mcq, tf, fill, match.
+   First try right -> done immediately.
+   First try wrong -> revise your pick, then explain your thinking in an
+   open box (not graded, just needs to be filled in) to finish the question.
+   Every question must be finished before the next section unlocks. */
 (function () {
   function shuffle(arr) {
     const a = arr.slice();
@@ -22,26 +24,28 @@
     return e;
   }
 
-  var HINT_AFTER_TRIES = 3;
-
   class Quiz {
     constructor(container, questions, meta) {
       this.container = container;
       this.questions = questions;
       this.meta = meta || {};
-      this.state = questions.map(() => ({ selected: null, solved: false, tries: 0 }));
+      this.state = questions.map(() => ({ selected: null, solved: false, revising: false }));
       this.matchState = questions.map((q) =>
         q.type === 'match'
           ? { order: shuffle(q.pairs.map((_, i) => i)), selectedTerm: null, matched: new Set() }
           : null
       );
+      this._fbEls = [];
+      this._wrapEls = [];
+      this._btnEls = [];
+      this._reflectEls = [];
       this.build();
     }
 
     build() {
       this.container.innerHTML = '';
       this.container.appendChild(el('div', 'quiz-title', this.icon() + (this.meta.title || 'Show what you know!')));
-      this.container.appendChild(el('div', 'quiz-sub', this.meta.sub || 'Get every question right to unlock the next part. You can try as many times as you need!'));
+      this.container.appendChild(el('div', 'quiz-sub', this.meta.sub || 'Answer every question. Get one wrong? No problem — just try again and tell us your thinking!'));
 
       const progress = el('div', 'quiz-progress');
       const bar = el('div', 'quiz-progress-bar');
@@ -57,7 +61,7 @@
       this.questions.forEach((q, i) => this.container.appendChild(this.renderQuestion(q, i)));
 
       const complete = el('div', 'quiz-complete');
-      const msg = el('div', 'quiz-complete-msg', '🎉 Awesome! You got every question right!');
+      const msg = el('div', 'quiz-complete-msg', '🎉 Awesome! You finished every question!');
       complete.appendChild(msg);
       if (this.meta.nextId || this.meta.nextHref) {
         const nextBtn = el('button', 'btn btn-primary', (this.meta.nextLabel ? 'Continue to ' + this.meta.nextLabel : 'Continue') + ' →');
@@ -95,9 +99,7 @@
 
       const fb = el('div', 'q-feedback');
       wrap.appendChild(fb);
-      this._fbEls = this._fbEls || [];
       this._fbEls[i] = fb;
-      this._wrapEls = this._wrapEls || [];
       this._wrapEls[i] = wrap;
 
       if (q.type === 'mcq' || q.type === 'tf' || q.type === 'fill') {
@@ -105,7 +107,6 @@
         btn.type = 'button';
         btn.addEventListener('click', () => this.checkOne(i));
         wrap.appendChild(btn);
-        this._btnEls = this._btnEls || [];
         this._btnEls[i] = btn;
       }
 
@@ -140,7 +141,7 @@
       input.placeholder = q.placeholder || 'Type your answer…';
       input.addEventListener('input', () => { this.state[i].selected = input.value; });
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); this.checkOne(i); }
+        if (e.key === 'Enter') { e.preventDefault(); if (!this.state[i].revising) this.checkOne(i); }
       });
       box.appendChild(input);
       return box;
@@ -241,7 +242,6 @@
         return;
       }
 
-      s.tries++;
       const ok = this.isCorrect(q, i);
 
       if (q.type === 'mcq' || q.type === 'tf') {
@@ -265,16 +265,48 @@
         fb.textContent = '✓ That\'s it! ' + (q.explain || '');
         this.updateProgress();
       } else {
+        s.revising = true;
         fb.className = 'q-feedback show wrong';
-        let hint = '';
-        if (s.tries >= HINT_AFTER_TRIES) {
-          if (q.type === 'mcq') hint = ' Hint: the answer is "' + q.choices[q.answer] + '".';
-          if (q.type === 'tf') hint = ' Hint: the answer is ' + (q.answer ? 'True' : 'False') + '.';
-          if (q.type === 'fill') hint = ' Hint: try "' + q.answer[0] + '".';
-        }
-        fb.textContent = '🤔 Not quite — try again!' + hint;
-        if (q.type === 'fill') wrap.querySelector('input').focus();
+        fb.textContent = '🤔 Not quite! Pick again if you\'d like to change your mind, then tell us your thinking below.';
+        const btn = this._btnEls[i];
+        if (btn) btn.style.display = 'none';
+        this.renderReflection(i);
       }
+    }
+
+    renderReflection(i) {
+      if (this._reflectEls[i]) return;
+      const wrap = this._wrapEls[i];
+      const box = el('div', 'reflect-box');
+      box.appendChild(el('div', 'reflect-label', '💭 Why do you think you changed your answer? Tell us in your own words.'));
+      const textarea = document.createElement('textarea');
+      textarea.className = 'reflect-input';
+      textarea.placeholder = 'Type your thinking here…';
+      const submitBtn = el('button', 'btn btn-reflect-submit', 'Submit My Answer');
+      submitBtn.type = 'button';
+      submitBtn.disabled = true;
+      textarea.addEventListener('input', () => {
+        submitBtn.disabled = textarea.value.trim().length === 0;
+      });
+      submitBtn.addEventListener('click', () => this.submitReflection(i));
+      box.appendChild(textarea);
+      box.appendChild(submitBtn);
+      wrap.appendChild(box);
+      this._reflectEls[i] = { box, textarea, submitBtn };
+      textarea.focus();
+    }
+
+    submitReflection(i) {
+      const s = this.state[i];
+      if (s.solved) return;
+      const r = this._reflectEls[i];
+      if (!r || r.textarea.value.trim().length === 0) return;
+      s.solved = true;
+      this.markSolved(i);
+      const fb = this._fbEls[i];
+      fb.className = 'q-feedback show right';
+      fb.textContent = '✏️ Thanks for sharing your thinking — nice work sticking with it!';
+      this.updateProgress();
     }
 
     markSolved(i) {
@@ -285,8 +317,10 @@
         const chk = el('span', 'solved-check', ' ✅');
         num.appendChild(chk);
       }
-      const btn = this._btnEls && this._btnEls[i];
+      const btn = this._btnEls[i];
       if (btn) { btn.disabled = true; btn.style.display = 'none'; }
+      const r = this._reflectEls[i];
+      if (r) { r.textarea.disabled = true; r.submitBtn.disabled = true; r.submitBtn.style.display = 'none'; }
       wrap.querySelectorAll('input').forEach((n) => (n.disabled = true));
     }
 
@@ -295,7 +329,7 @@
       const total = this.questions.length;
       const pct = Math.round((solvedCount / total) * 100);
       this.progressFill.style.width = pct + '%';
-      this.progressLabel.textContent = solvedCount + ' of ' + total + ' correct';
+      this.progressLabel.textContent = solvedCount + ' of ' + total + ' done';
 
       if (solvedCount === total) {
         this.completeBox.classList.add('show');
