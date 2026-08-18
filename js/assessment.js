@@ -241,7 +241,8 @@
       this.resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
       if (passed && this.opts.storageKey) {
-        try { localStorage.setItem(this.opts.storageKey, '1'); } catch (e) {}
+        if (window.Player) Player.pSet(this.opts.storageKey, '1');
+        else { try { localStorage.setItem(this.opts.storageKey, '1'); } catch (e) {} }
         document.dispatchEvent(new CustomEvent('quiz-passed', { detail: { key: this.opts.storageKey } }));
       }
     }

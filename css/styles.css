@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
-
 :root {
   --blue: #3b82f6;
   --blue-dark: #2563eb;
@@ -92,6 +90,22 @@ code { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; }
 }
 .sync-row .btn { padding: 8px 14px; font-size: .8rem; flex: none; }
 .sync-msg { font-size: .82rem; font-weight: 700; color: var(--purple); min-height: 1.2em; }
+
+.player-badge {
+  font-size: .78rem; font-weight: 800; color: #7e22ce; background: #f5f3ff;
+  border: 1.5px solid #ddd6fe; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-family: var(--font-body);
+}
+.player-badge:hover { background: #ede9fe; }
+
+.player-gate { display: none; margin: 0 0 28px; }
+.player-gate-card {
+  width: 100%; text-align: center; background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+  border: 3px dashed var(--purple); border-radius: 20px; padding: 26px 24px;
+}
+.player-gate-title { font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; margin-bottom: 6px; }
+.player-gate-card p { font-size: .9rem; color: var(--ink-soft); max-width: 480px; margin: 0 auto 16px; }
+.player-gate .sync-row { max-width: 380px; margin: 0 auto; }
+.player-gate .sync-row input { text-align: center; font-weight: 700; }
 
 /* Hero */
 .hero { padding: 60px 0 40px; text-align: center; }

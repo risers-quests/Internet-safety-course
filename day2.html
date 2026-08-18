@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LifeHub Risers | Riser's Quest — Day 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -532,6 +535,7 @@
   LifeHub Risers · Riser's Quest — Day 2 of 2. <a href="index.html">Back to course home</a>
 </footer>
 
+<script src="js/player.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/assessment.js"></script>
 <script src="js/characters.js"></script>
@@ -714,11 +718,11 @@
   const certInput = document.getElementById('cert-name-input');
   const certDisplay = document.getElementById('cert-name-display');
   const certDate = document.getElementById('cert-date-display');
-  const savedName = (function () { try { return localStorage.getItem('isc-cert-name') || ''; } catch (e) { return ''; } })();
+  const savedName = (Player.pGet('isc-cert-name')) || Player.getPlayer() || '';
   if (savedName) { certInput.value = savedName; certDisplay.textContent = savedName; }
   certInput.addEventListener('input', function () {
     certDisplay.textContent = certInput.value.trim() || 'Your Name Here';
-    try { localStorage.setItem('isc-cert-name', certInput.value); } catch (e) {}
+    Player.pSet('isc-cert-name', certInput.value);
   });
   certDate.textContent = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('cert-print-btn').addEventListener('click', function () { window.print(); });

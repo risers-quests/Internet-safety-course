@@ -54,6 +54,23 @@ refresh), with today's date filled in automatically. The "Print / Save as
 PDF" button calls `window.print()`; a print stylesheet isolates just the
 certificate (`#cert-print-area`) so the rest of the page doesn't print.
 
+## Sharing one computer between kids (no login)
+
+If a classroom or family shares one computer, "🛡️ Mission 1" and every other
+mission is locked behind a "👋 Who's on this quest?" name prompt (see
+`js/player.js`) the first time anyone opens Day 1 or Day 2 on that browser.
+Typing a name namespaces every progress key under it (`isc-d1-s1::Priya`
+instead of just `isc-d1-s1`), so a second kid can type their own name and get
+a completely clean slate on the same computer — nothing they see was unlocked
+by the previous kid, and nothing they do affects the previous kid's saved
+progress. The "👤 Name ▾" badge in the header lets anyone switch out; typing
+the same name back in picks up exactly where that person left off, since
+their progress was never deleted, just parked under their name.
+
+This is deliberately not a real login: there's no password and nothing
+stops someone from typing any name, including someone else's. It solves
+"two kids, one keyboard, no mix-ups" without needing accounts.
+
 ## Continuing across devices (no login)
 
 Progress lives in `localStorage`, which is tied to one browser on one device
@@ -61,13 +78,14 @@ Progress lives in `localStorage`, which is tied to one browser on one device
 back the next day on the *same* device. It only breaks if a learner switches
 devices or browsers between Day 1 and Day 2.
 
-Rather than add real accounts (Google Sign-In or similar would need a
-backend server plus real privacy/consent handling for a product aimed at
-kids — a lot of infrastructure for what's otherwise a static site), there's a
+Real accounts (Google Sign-In or similar) would need a backend server plus
+real privacy/consent handling for a product aimed at kids — a lot of
+infrastructure for what's otherwise a static site. Instead there's a
 lightweight no-login workaround: the "🔗 Switch device" button in the header
-packs current progress into a short code. Copy it on device A, paste it into
-the same panel on device B, and progress is restored instantly. See the
-`buildSyncWidget` code in `js/app.js`.
+packs the *current player's* name and progress into a short code. Copy it on
+device A, paste it into the same panel on device B, and both the name and
+progress are restored instantly under that name. See `buildSyncWidget` and
+`encodeCode`/`applyCode` in `js/app.js`.
 
 ## Adding real videos (optional)
 
@@ -110,5 +128,6 @@ js/quiz.js          Practice quiz engine (mcq / true-false / fill-in / match + r
 js/assessment.js    Final Boss engine (graded, pass/fail, retry)
 js/characters.js    Maya & Leo cartoon SVG art
 js/story.js         Interactive story/comic-strip component
+js/player.js        Per-name progress namespacing (shared-computer support)
 js/app.js           Mission locking, progress tracking, and the cross-device sync widget
 ```

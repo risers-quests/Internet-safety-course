@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LifeHub Risers | Riser's Quest — Day 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -35,7 +38,12 @@
   </div>
 
   <!-- SECTION 1 -->
-  <section class="section" id="s1">
+  <section class="section" id="s1" data-requires="">
+    <div class="lock-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <p>Tell us who's playing above to begin!</p>
+      <span>👋 Waiting for your name</span>
+    </div>
     <div class="section-head">
       <div class="icon" style="background:linear-gradient(135deg, var(--blue), var(--blue-dark));"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
       <div>
@@ -400,6 +408,7 @@
   LifeHub Risers · Riser's Quest — Day 1 of 2. <a href="day2.html">Continue to Day 2 →</a>
 </footer>
 
+<script src="js/player.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/characters.js"></script>
 <script src="js/story.js"></script>

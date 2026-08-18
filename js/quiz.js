@@ -334,7 +334,8 @@
       if (solvedCount === total) {
         this.completeBox.classList.add('show');
         if (this.meta.storageKey) {
-          try { localStorage.setItem(this.meta.storageKey, '1'); } catch (e) {}
+          if (window.Player) Player.pSet(this.meta.storageKey, '1');
+          else { try { localStorage.setItem(this.meta.storageKey, '1'); } catch (e) {} }
           document.dispatchEvent(new CustomEvent('quiz-passed', { detail: { key: this.meta.storageKey } }));
         }
       } else {
