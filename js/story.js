@@ -24,8 +24,8 @@
     const chipB = el('div', 'story-chip');
     [['a', chipA], ['b', chipB]].forEach(([key, chip]) => {
       const c = chars[key];
-      const av = el('div', 'story-chip-avatar', c.emoji);
-      av.style.background = c.color;
+      const av = el('div', 'story-chip-avatar', (window.CHAR_SVG && window.CHAR_SVG[c.art]) || c.emoji || '');
+      av.style.borderColor = c.color;
       chip.appendChild(av);
       chip.appendChild(el('div', 'story-chip-name', c.name));
     });

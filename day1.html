@@ -37,7 +37,7 @@
   <!-- SECTION 1 -->
   <section class="section" id="s1">
     <div class="section-head">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+      <div class="icon" style="background:linear-gradient(135deg, var(--blue), var(--blue-dark));"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
       <div>
         <h2>Section 1 · Staying Safe Online</h2>
         <div class="sub">Passwords, tricky messages, strangers, and simple habits that keep you safe.</div>
@@ -179,7 +179,7 @@
       <span>🔒 Locked for now</span>
     </div>
     <div class="section-head">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <div class="icon" style="background:linear-gradient(135deg, var(--teal), #0f766e);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
       <div>
         <h2>Section 2 · Mastering Google Search</h2>
         <div class="sub">Simple tricks that help you find exactly what you need, fast.</div>
@@ -305,12 +305,13 @@
 </footer>
 
 <script src="js/quiz.js"></script>
+<script src="js/characters.js"></script>
 <script src="js/story.js"></script>
 <script src="js/app.js"></script>
 <script>
   const CHARS = {
-    a: { name: 'Maya', emoji: '👧', color: 'var(--purple)' },
-    b: { name: 'Leo', emoji: '👦', color: 'var(--teal)' }
+    a: { name: 'Maya', art: 'maya', color: 'var(--purple)' },
+    b: { name: 'Leo', art: 'leo', color: 'var(--teal)' }
   };
 
   mountStory('story-s1', {

@@ -51,7 +51,7 @@
       <span>🔒 Locked for now</span>
     </div>
     <div class="section-head">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+      <div class="icon" style="background:linear-gradient(135deg, var(--amber), #b45309);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
       <div>
         <h2>Section 3 · Research Without Relying on AI</h2>
         <div class="sub">Find answers yourself, step by step, without asking a chatbot.</div>
@@ -145,7 +145,7 @@
       <span>🔒 Locked for now</span>
     </div>
     <div class="section-head">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
+      <div class="icon" style="background:linear-gradient(135deg, var(--green), #15803d);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
       <div>
         <h2>Section 4 · Finding Credible Sources</h2>
         <div class="sub">Simple ways to tell if a source deserves your trust.</div>
@@ -246,7 +246,7 @@
       <span>🔒 Locked for now</span>
     </div>
     <div class="section-head">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></div>
+      <div class="icon" style="background:linear-gradient(135deg, var(--purple), #7e22ce);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></div>
       <div>
         <h2>Section 5 · Using Britannica Wisely</h2>
         <div class="sub">How to use a trusted online encyclopedia the smart way.</div>
@@ -337,12 +337,13 @@
 </footer>
 
 <script src="js/quiz.js"></script>
+<script src="js/characters.js"></script>
 <script src="js/story.js"></script>
 <script src="js/app.js"></script>
 <script>
   const CHARS = {
-    a: { name: 'Maya', emoji: '👧', color: 'var(--purple)' },
-    b: { name: 'Leo', emoji: '👦', color: 'var(--teal)' }
+    a: { name: 'Maya', art: 'maya', color: 'var(--purple)' },
+    b: { name: 'Leo', art: 'leo', color: 'var(--teal)' }
   };
 
   mountStory('story-s3', {
