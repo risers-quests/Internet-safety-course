@@ -1,5 +1,5 @@
 (function () {
-  var ALL_KEYS = ['isc-d1-s1', 'isc-d1-s2', 'isc-d2-s1', 'isc-d2-s2', 'isc-d2-s3'];
+  var ALL_KEYS = ['isc-d1-s1', 'isc-d1-s2', 'isc-d2-s1', 'isc-d2-s2', 'isc-d2-s3', 'isc-final'];
   var LOCK_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>';
 
   function hasKey(k) {
@@ -19,7 +19,7 @@
 
   function refreshProgress() {
     var pill = document.querySelector('[data-progress-pill]');
-    if (pill) pill.textContent = completedCount() + ' / ' + ALL_KEYS.length + ' sections complete';
+    if (pill) pill.textContent = completedCount() + ' / ' + ALL_KEYS.length + ' complete';
 
     document.querySelectorAll('.section[data-requires]').forEach(function (section) {
       section.classList.toggle('locked', !keysMet(section.getAttribute('data-requires')));
