@@ -49,6 +49,105 @@
     );
   });
 
-  document.addEventListener('DOMContentLoaded', refreshProgress);
+  /* ---- Continue on another device (no login needed) ----
+     Progress lives in localStorage, which is tied to one browser on one
+     device. This packs current progress into a short code you can copy
+     and paste into the site on a different device/browser to pick up
+     where you left off, without any account or server. */
+  function certName() {
+    try { return localStorage.getItem('isc-cert-name') || ''; } catch (e) { return ''; }
+  }
+
+  function encodeCode() {
+    var bits = ALL_KEYS.map(function (k) { return hasKey(k) ? '1' : '0'; }).join('');
+    var payload = bits + '|' + encodeURIComponent(certName());
+    try { return btoa(payload); } catch (e) { return ''; }
+  }
+
+  function applyCode(code) {
+    try {
+      var payload = atob(code.trim());
+      var parts = payload.split('|');
+      var bits = parts[0] || '';
+      var name = decodeURIComponent(parts[1] || '');
+      var okAny = false;
+      ALL_KEYS.forEach(function (k, i) {
+        if (bits[i] === '1') { localStorage.setItem(k, '1'); okAny = true; }
+      });
+      if (name) { try { localStorage.setItem('isc-cert-name', name); } catch (e) {} }
+      return okAny;
+    } catch (e) { return false; }
+  }
+
+  function el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html !== undefined) e.innerHTML = html;
+    return e;
+  }
+
+  function buildSyncWidget() {
+    var nav = document.querySelector('.main-nav');
+    if (!nav || document.getElementById('sync-btn')) return;
+
+    var btn = el('button', 'sync-btn', '🔗 Switch device');
+    btn.id = 'sync-btn';
+    btn.type = 'button';
+
+    var panel = el('div', 'sync-panel');
+    panel.innerHTML =
+      '<div class="sync-panel-title">📱 Continue on another device</div>' +
+      '<p>No login needed! Copy this code on your first device, then paste it into this box on the other one.</p>' +
+      '<label>Your code (copy this)</label>' +
+      '<div class="sync-row"><input type="text" id="sync-code-out" readonly><button type="button" class="btn btn-ghost" id="sync-copy-btn">Copy</button></div>' +
+      '<label>Paste a code here to restore progress</label>' +
+      '<div class="sync-row"><input type="text" id="sync-code-in" placeholder="Paste code…"><button type="button" class="btn btn-primary" id="sync-apply-btn">Restore</button></div>' +
+      '<div class="sync-msg" id="sync-msg"></div>';
+
+    nav.appendChild(btn);
+    document.body.appendChild(panel);
+
+    btn.addEventListener('click', function () {
+      var showing = panel.classList.toggle('show');
+      if (showing) document.getElementById('sync-code-out').value = encodeCode();
+    });
+
+    document.addEventListener('click', function (e) {
+      if (panel.classList.contains('show') && !panel.contains(e.target) && e.target !== btn) {
+        panel.classList.remove('show');
+      }
+    });
+
+    panel.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    panel.querySelector('#sync-copy-btn').addEventListener('click', function () {
+      var input = document.getElementById('sync-code-out');
+      input.select();
+      try {
+        navigator.clipboard.writeText(input.value);
+        document.getElementById('sync-msg').textContent = '✅ Copied!';
+      } catch (e) {
+        document.execCommand && document.execCommand('copy');
+        document.getElementById('sync-msg').textContent = 'Selected — press Ctrl+C to copy.';
+      }
+    });
+
+    panel.querySelector('#sync-apply-btn').addEventListener('click', function () {
+      var code = document.getElementById('sync-code-in').value;
+      var msg = document.getElementById('sync-msg');
+      if (!code.trim()) { msg.textContent = '👉 Paste a code first!'; return; }
+      if (applyCode(code)) {
+        msg.textContent = '🎉 Progress restored! Reloading…';
+        setTimeout(function () { window.location.reload(); }, 700);
+      } else {
+        msg.textContent = '❌ That code didn\'t work — check it and try again.';
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    buildSyncWidget();
+    refreshProgress();
+  });
   document.addEventListener('quiz-passed', refreshProgress);
 })();
