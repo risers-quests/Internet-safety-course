@@ -11,10 +11,13 @@ A self-paced, pictorial, interactive 2-day course built for LifeHub Risers, cove
 4. Finding Credible Sources (the CRAAP test, checking sideways, warning signs)
 5. Using Britannica Wisely (how to use a trusted encyclopedia well, and why to still double-check)
 
-Each of the 5 sections opens with a short interactive story starring one of five
-recurring characters (Zara, Gigi, Remy, Vera, and Bea), has a video slot ready
-for real footage, and ends with a mixed quiz (multiple choice, true/false,
-fill-in-the-blank, matching).
+Each of the 5 sections opens with a short interactive story starring two
+recurring characters, Maya and Leo, who take turns teaching each other what
+they learn. Sections also have a video slot ready for real footage, a small
+glossary of new words, a "Think about it" scenario, and end with a mixed quiz
+(multiple choice, true/false, fill-in-the-blank, matching). Content is written
+in simple language but is meant to take a real ~20–30 minutes per section, not
+a quick skim.
 
 ## How the quiz works
 
