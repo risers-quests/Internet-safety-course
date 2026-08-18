@@ -42,7 +42,56 @@
       this.build();
     }
 
+    isAlreadyDone() {
+      if (!this.meta.storageKey) return false;
+      return !!(window.Player ? Player.pGet(this.meta.storageKey) : localStorage.getItem(this.meta.storageKey));
+    }
+
     build() {
+      if (this.isAlreadyDone()) this.buildCompletedSummary();
+      else this.buildQuiz();
+    }
+
+    buildCompletedSummary() {
+      this.container.innerHTML = '';
+      this.container.appendChild(el('div', 'quiz-title', this.icon() + (this.meta.title || 'Show what you know!')));
+
+      const done = el('div', 'quiz-complete show');
+      done.appendChild(el('div', 'quiz-complete-msg', '✅ You already finished this checkpoint! Nice work — no need to redo it.'));
+      if (this.meta.nextId || this.meta.nextHref) {
+        const nextBtn = el('button', 'btn btn-primary', (this.meta.nextLabel ? 'Continue to ' + this.meta.nextLabel : 'Continue') + ' →');
+        nextBtn.type = 'button';
+        nextBtn.addEventListener('click', () => {
+          if (this.meta.nextId) {
+            var nextEl = document.getElementById(this.meta.nextId);
+            if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else if (this.meta.nextHref) {
+            window.location.href = this.meta.nextHref;
+          }
+        });
+        done.appendChild(nextBtn);
+      }
+      const redoBtn = el('button', 'btn btn-ghost', '🔁 Redo for practice');
+      redoBtn.type = 'button';
+      redoBtn.style.marginLeft = '10px';
+      redoBtn.addEventListener('click', () => this.buildQuiz());
+      done.appendChild(redoBtn);
+
+      this.container.appendChild(done);
+    }
+
+    buildQuiz() {
+      this.state = this.questions.map(() => ({ selected: null, solved: false, revising: false }));
+      this.matchState = this.questions.map((q) =>
+        q.type === 'match'
+          ? { order: shuffle(q.pairs.map((_, i) => i)), selectedTerm: null, matched: new Set() }
+          : null
+      );
+      this._fbEls = [];
+      this._wrapEls = [];
+      this._btnEls = [];
+      this._reflectEls = [];
+
       this.container.innerHTML = '';
       this.container.appendChild(el('div', 'quiz-title', this.icon() + (this.meta.title || 'Show what you know!')));
       this.container.appendChild(el('div', 'quiz-sub', this.meta.sub || 'Answer every question. Get one wrong? No problem — just try again and tell us your thinking!'));

@@ -32,7 +32,30 @@
       this.build();
     }
 
+    isAlreadyDone() {
+      if (!this.opts.storageKey) return false;
+      return !!(window.Player ? Player.pGet(this.opts.storageKey) : localStorage.getItem(this.opts.storageKey));
+    }
+
     build() {
+      if (this.isAlreadyDone()) this.buildCompletedSummary();
+      else this.buildAssessment();
+    }
+
+    buildCompletedSummary() {
+      this.container.innerHTML = '';
+      this.container.appendChild(el('div', 'quiz-title', this.icon() + (this.opts.title || 'Final Assessment')));
+      const box = el('div', 'assessment-score pass');
+      box.appendChild(el('div', 'assessment-score-num', '🏆'));
+      box.appendChild(el('div', 'assessment-score-msg', 'You already beat this challenge! No need to retake it.'));
+      const redoBtn = el('button', 'btn btn-ghost', '🔁 Retake for practice');
+      redoBtn.type = 'button';
+      redoBtn.addEventListener('click', () => this.buildAssessment());
+      box.appendChild(redoBtn);
+      this.container.appendChild(box);
+    }
+
+    buildAssessment() {
       this.state = this.questions.map(() => ({ selected: null }));
       this.matchState = this.questions.map((q) =>
         q.type === 'match'
