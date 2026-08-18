@@ -121,11 +121,14 @@ devices or browsers mid-quest.
 Real accounts (Google Sign-In or similar) would need a backend server plus
 real privacy/consent handling for a product aimed at kids — a lot of
 infrastructure for what's otherwise a static site. Instead there's a
-lightweight no-login workaround: the "🔗 Switch device" button in the header
-packs the *current player's* name and progress into a short code. Copy it on
-device A, paste it into the same panel on device B, and both the name and
-progress are restored instantly under that name. See `buildSyncWidget` and
-`encodeCode`/`applyCode` in `js/app.js`.
+lightweight no-login workaround: the "🔄 Restore Session" button in the
+header packs the *current player's* name and progress into a short code.
+The panel leads with pasting a code back in (the most common reason to open
+it — a new device, a cleared browser, progress that looks lost), with
+getting the current code to use elsewhere as the secondary option below it.
+Copy it on device A, paste it into the same panel on device B, and both the
+name and progress are restored instantly under that name. See
+`buildSyncWidget` and `encodeCode`/`applyCode` in `js/app.js`.
 
 ## Adding real videos (optional)
 

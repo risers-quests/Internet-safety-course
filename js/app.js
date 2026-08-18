@@ -208,19 +208,19 @@
     var nav = document.querySelector('.main-nav');
     if (!nav || document.getElementById('sync-btn')) return;
 
-    var btn = el('button', 'sync-btn', '🔗 Switch device');
+    var btn = el('button', 'sync-btn', '🔄 Restore Session');
     btn.id = 'sync-btn';
     btn.type = 'button';
 
     var panel = el('div', 'sync-panel');
     panel.innerHTML =
-      '<div class="sync-panel-title">📱 Continue on another device</div>' +
-      '<p>No login needed! Copy this code on your first device, then paste it into this box on the other one. It carries your name and progress together.</p>' +
-      '<label>Your code (copy this)</label>' +
-      '<div class="sync-row"><input type="text" id="sync-code-out" readonly><button type="button" class="btn btn-ghost" id="sync-copy-btn">Copy</button></div>' +
-      '<label>Paste a code here to restore progress</label>' +
+      '<div class="sync-panel-title">🔄 Restore Your Session</div>' +
+      '<p>Already have a code — from checking in, or from another device? Paste it below to bring back that name and progress here. No login needed.</p>' +
+      '<label>Paste your code here</label>' +
       '<div class="sync-row"><input type="text" id="sync-code-in" placeholder="Paste code…"><button type="button" class="btn btn-primary" id="sync-apply-btn">Restore</button></div>' +
-      '<div class="sync-msg" id="sync-msg"></div>';
+      '<div class="sync-msg" id="sync-msg"></div>' +
+      '<label>Or get your code to use somewhere else</label>' +
+      '<div class="sync-row"><input type="text" id="sync-code-out" readonly><button type="button" class="btn btn-ghost" id="sync-copy-btn">Copy</button></div>';
 
     nav.appendChild(btn);
     document.body.appendChild(panel);
