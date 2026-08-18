@@ -74,13 +74,40 @@
       const redoBtn = el('button', 'btn btn-ghost', '🔁 Redo for practice');
       redoBtn.type = 'button';
       redoBtn.style.marginLeft = '10px';
-      redoBtn.addEventListener('click', () => this.buildQuiz());
+      redoBtn.addEventListener('click', () => this.buildQuiz(true));
       done.appendChild(redoBtn);
 
       this.container.appendChild(done);
     }
 
-    buildQuiz() {
+    progressKey() {
+      return this.meta.storageKey ? this.meta.storageKey + '::progress' : null;
+    }
+
+    saveQuestionProgress() {
+      const key = this.progressKey();
+      if (!key) return;
+      const val = JSON.stringify(this.state.map((s) => !!s.solved));
+      if (window.Player) Player.pSet(key, val);
+      else { try { localStorage.setItem(key, val); } catch (e) {} }
+    }
+
+    loadQuestionProgress() {
+      const key = this.progressKey();
+      if (!key) return null;
+      let raw;
+      if (window.Player) raw = Player.pGet(key);
+      else { try { raw = localStorage.getItem(key); } catch (e) { raw = null; } }
+      if (!raw) return null;
+      try {
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    buildQuiz(reset) {
       this.state = this.questions.map(() => ({ selected: null, solved: false, revising: false }));
       this.matchState = this.questions.map((q) =>
         q.type === 'match'
@@ -91,6 +118,17 @@
       this._wrapEls = [];
       this._btnEls = [];
       this._reflectEls = [];
+
+      if (reset) {
+        this.saveQuestionProgress();
+      } else {
+        const saved = this.loadQuestionProgress();
+        if (saved) {
+          saved.forEach((solved, i) => {
+            if (solved && this.state[i]) this.state[i].solved = true;
+          });
+        }
+      }
 
       this.container.innerHTML = '';
       this.container.appendChild(el('div', 'quiz-title', this.icon() + (this.meta.title || 'Show what you know!')));
@@ -140,6 +178,12 @@
       wrap.dataset.index = i;
       wrap.appendChild(el('div', 'q-num', 'Question ' + (i + 1) + ' · ' + this.typeLabel(q.type)));
       wrap.appendChild(el('div', 'q-prompt', q.q || ''));
+      this._wrapEls[i] = wrap;
+
+      if (this.state[i].solved) {
+        this.renderAlreadyAnswered(wrap, i);
+        return wrap;
+      }
 
       if (q.type === 'mcq') wrap.appendChild(this.renderChoices(q, i, q.choices));
       else if (q.type === 'tf') wrap.appendChild(this.renderChoices(q, i, ['True', 'False'], 'tf-row'));
@@ -149,7 +193,6 @@
       const fb = el('div', 'q-feedback');
       wrap.appendChild(fb);
       this._fbEls[i] = fb;
-      this._wrapEls[i] = wrap;
 
       if (q.type === 'mcq' || q.type === 'tf' || q.type === 'fill') {
         const btn = el('button', 'btn btn-check', 'Check');
@@ -160,6 +203,17 @@
       }
 
       return wrap;
+    }
+
+    renderAlreadyAnswered(wrap, i) {
+      wrap.classList.add('solved');
+      const num = wrap.querySelector('.q-num');
+      if (num && !num.querySelector('.solved-check')) {
+        num.appendChild(el('span', 'solved-check', ' ✅'));
+      }
+      const fb = el('div', 'q-feedback show right', '✅ You already answered this one in a previous session.');
+      wrap.appendChild(fb);
+      this._fbEls[i] = fb;
     }
 
     typeLabel(t) {
@@ -371,6 +425,7 @@
       const r = this._reflectEls[i];
       if (r) { r.textarea.disabled = true; r.submitBtn.disabled = true; r.submitBtn.style.display = 'none'; }
       wrap.querySelectorAll('input').forEach((n) => (n.disabled = true));
+      this.saveQuestionProgress();
     }
 
     updateProgress() {

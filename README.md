@@ -49,6 +49,16 @@ If a mission is reopened after it's already done, it shows a compact
 "🔁 Redo for practice" button) — the underlying flag was never lost, only the
 old UI failed to reflect it.
 
+Leaving a mission *partway* through — some questions answered, others not —
+and coming back later works the same way at the question level: each
+question's solved/unsolved state is saved to `localStorage` the moment it's
+solved (not just the all-done flag for the whole mission), so a reload shows
+already-answered questions as a locked, checked-off "✅ already answered"
+line while the remaining ones are still blank and interactive, with the
+progress bar picking up right where it left off. Clicking "🔁 Redo for
+practice" clears that saved per-question progress and starts the mission
+fully blank again.
+
 ## How the Final Boss Challenge works
 
 This one is graded for real, no reflection shortcut, and its 20 questions are
