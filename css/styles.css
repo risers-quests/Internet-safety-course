@@ -475,7 +475,6 @@ table.op-table code { background: #eef2ff; color: var(--blue-dark); padding: 2px
 }
 .mini-scene .scene-stage { width: 130px; height: 130px; position: relative; }
 .mini-scene .scene-caption { font-weight: 700; font-size: 1.05rem; }
-.mini-scene .scene-note { font-size: .82rem; opacity: .9; max-width: 360px; }
 
 @keyframes msPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 @keyframes msBob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(-4deg); } }
