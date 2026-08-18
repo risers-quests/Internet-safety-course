@@ -86,20 +86,30 @@ certificate spanning two printed pages. The clone is removed again on
 
 ## Sharing one computer between kids (no login)
 
-If a classroom or family shares one computer, "🛡️ Mission 1" and every other
-mission is locked behind a "👋 Who's on this quest?" name prompt (see
-`js/player.js`) the first time anyone opens either part on that browser.
-Typing a name namespaces every progress key under it (`isc-d1-s1::Priya`
-instead of just `isc-d1-s1`), so a second kid can type their own name and get
-a completely clean slate on the same computer — nothing they see was unlocked
-by the previous kid, and nothing they do affects the previous kid's saved
-progress. The "👤 Name ▾" badge in the header lets anyone switch out; typing
-the same name back in picks up exactly where that person left off, since
-their progress was never deleted, just parked under their name.
+The very first thing anyone sees on any page — including the home page,
+before Part 1 or Part 2 — is a "👋 Who's on this quest?" name prompt (see
+`js/player.js` and `buildPlayerGate` in `js/app.js`). Typing a name
+namespaces every progress key under it (`isc-d1-s1::Priya` instead of just
+`isc-d1-s1`), so a second kid can type their own name and get a completely
+clean slate on the same computer — nothing they see was unlocked by the
+previous kid, and nothing they do affects the previous kid's saved progress.
+The "👤 Name ▾" badge in the header lets anyone switch out; typing the same
+name back in picks up exactly where that person left off, since their
+progress was never deleted, just parked under their name.
 
 This is deliberately not a real login: there's no password and nothing
 stops someone from typing any name, including someone else's. It solves
 "two kids, one keyboard, no mix-ups" without needing accounts.
+
+The moment a name is submitted, before the quest itself is reachable, the
+same card shows that name's sync code (see "Continuing across devices"
+below) with a Copy button and a nudge to save it somewhere safe right then
+— rather than leaving it as something a kid has to remember to go dig up
+from a header button later. There's no way to hand out a fixed code ahead
+of time, since the code encodes actual progress and changes as missions get
+finished — but showing name and code together at the moment they're most
+likely to be written down gets most of the way there without needing a
+backend to issue and look up real per-kid accounts.
 
 ## Continuing across devices (no login)
 

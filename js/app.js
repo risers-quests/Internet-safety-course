@@ -71,29 +71,83 @@
      No accounts — just a name "checked in" on this browser that namespaces
      every progress key, so a second kid on the same computer can check in
      under their own name and get a clean slate instead of seeing someone
-     else's unlocked missions. */
+     else's unlocked missions. This is the very first thing shown on any
+     page, and right after naming yourself it shows your name + sync code
+     together so there's something to save before the quest even starts —
+     see renderCodeStep below. */
   function buildPlayerGate() {
-    var main = document.querySelector('main.container') || document.querySelector('main');
-    if (!main || document.getElementById('player-gate')) return;
+    if (document.getElementById('player-gate')) return;
+    var main = document.querySelector('main');
+    if (!main) return;
 
     var gate = el('div', 'player-gate');
     gate.id = 'player-gate';
-    gate.innerHTML =
-      '<div class="player-gate-card">' +
-      '<div class="player-gate-title">👋 Who\'s on this quest?</div>' +
-      '<p>If someone else uses this computer too, typing your name keeps your progress separate from theirs. Used this before? Type the same name to pick up where you left off.</p>' +
-      '<div class="sync-row"><input type="text" id="player-name-input" placeholder="Type your name…" maxlength="40"><button type="button" class="btn btn-primary" id="player-name-btn">Let\'s go!</button></div>' +
-      '</div>';
-    main.prepend(gate);
+    var card = el('div', 'player-gate-card');
+    gate.appendChild(card);
 
-    function submit() {
-      var val = document.getElementById('player-name-input').value;
-      if (Player.setPlayer(val)) refreshProgress();
+    if (main.classList.contains('container')) {
+      main.prepend(gate);
+    } else {
+      // index.html's <main> has no .container of its own (each section
+      // wraps itself) — give the gate its own so it lines up the same way.
+      var wrap = el('div', 'container');
+      wrap.appendChild(gate);
+      main.prepend(wrap);
     }
-    document.getElementById('player-name-btn').addEventListener('click', submit);
-    document.getElementById('player-name-input').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); submit(); }
-    });
+
+    wirePlayerGate(gate, card);
+  }
+
+  function wirePlayerGate(gate, card) {
+    renderNameStep();
+
+    function renderNameStep() {
+      card.innerHTML =
+        '<div class="player-gate-title">👋 Who\'s on this quest?</div>' +
+        '<p>If someone else uses this device too, typing your name keeps your progress separate from theirs. Used this before? Type the same name to pick up where you left off.</p>' +
+        '<div class="sync-row"><input type="text" id="player-name-input" placeholder="Type your name…" maxlength="40"><button type="button" class="btn btn-primary" id="player-name-btn">Let\'s go!</button></div>';
+
+      function submit() {
+        var val = document.getElementById('player-name-input').value;
+        var trimmed = String(val || '').trim().slice(0, 40);
+        if (Player.setPlayer(val)) renderCodeStep(trimmed);
+      }
+      document.getElementById('player-name-btn').addEventListener('click', submit);
+      document.getElementById('player-name-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); submit(); }
+      });
+    }
+
+    function renderCodeStep(name) {
+      var code = encodeCode();
+      card.innerHTML =
+        '<div class="player-gate-title">✅ You\'re checked in, ' + name + '!</div>' +
+        '<p>Before you start, save this code somewhere safe — a notes app, a photo of the screen. If this device ever forgets you (a cleared browser, a new computer), pasting it back in brings ' + name + '\'s progress back instantly. It updates as you go, but this one works right now too.</p>' +
+        '<label class="player-code-label">' + name + '\'s code</label>' +
+        '<div class="sync-row"><input type="text" id="gate-code-out" readonly><button type="button" class="btn btn-ghost" id="gate-code-copy">Copy</button></div>' +
+        '<div class="sync-msg" id="gate-code-msg"></div>' +
+        '<button type="button" class="btn btn-primary" id="gate-continue-btn">Start the quest →</button>';
+
+      document.getElementById('gate-code-out').value = code;
+      document.getElementById('gate-code-copy').addEventListener('click', function () {
+        var input = document.getElementById('gate-code-out');
+        input.select();
+        try {
+          navigator.clipboard.writeText(input.value);
+          document.getElementById('gate-code-msg').textContent = '✅ Copied! Paste it somewhere safe.';
+        } catch (e) {
+          document.execCommand && document.execCommand('copy');
+          document.getElementById('gate-code-msg').textContent = 'Selected — press Ctrl+C to copy.';
+        }
+      });
+      document.getElementById('gate-continue-btn').addEventListener('click', function () {
+        gate.style.display = 'none';
+      });
+
+      // Player.setPlayer's 'player-changed' event already ran refreshProgress
+      // and hid the gate — force it back open so the code step is seen.
+      gate.style.display = 'flex';
+    }
   }
 
   function refreshPlayerBadge() {
@@ -210,7 +264,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (document.querySelector('.day-hero')) buildPlayerGate();
+    buildPlayerGate();
     buildSyncWidget();
     refreshProgress();
   });
