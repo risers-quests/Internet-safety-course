@@ -29,14 +29,27 @@
     <h1>Researching &amp; Verifying Without Shortcuts</h1>
     <p style="color:var(--ink-soft); max-width:640px;">Now that you can search, learn to actually research: ask good questions, dig for yourself, weigh what you find, and use encyclopedias as a smart starting point rather than a final answer.</p>
     <div class="toc">
-      <a href="#s3" data-complete-key="isc-d2-s1">3. Research Without Relying on AI</a>
-      <a href="#s4" data-complete-key="isc-d2-s2">4. Finding Credible Sources</a>
-      <a href="#s5" data-complete-key="isc-d2-s3">5. Wikipedia &amp; Online Encyclopedias</a>
+      <a href="#s3" data-complete-key="isc-d2-s1" data-requires="isc-d1-s1,isc-d1-s2">3. Research Without Relying on AI</a>
+      <a href="#s4" data-complete-key="isc-d2-s2" data-requires="isc-d1-s1,isc-d1-s2,isc-d2-s1">4. Finding Credible Sources</a>
+      <a href="#s5" data-complete-key="isc-d2-s3" data-requires="isc-d1-s1,isc-d1-s2,isc-d2-s1,isc-d2-s2">5. Wikipedia &amp; Online Encyclopedias</a>
+    </div>
+  </div>
+
+  <div class="day-lock-banner" data-day-lock="isc-d1-s1,isc-d1-s2">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+    <div>
+      <strong>Day 2 is locked for now!</strong>
+      <p>Finish both Day 1 quizzes first. <a href="day1.html">Go back to Day 1 →</a></p>
     </div>
   </div>
 
   <!-- SECTION 3 -->
-  <section class="section" id="s3">
+  <section class="section" id="s3" data-requires="isc-d1-s1,isc-d1-s2">
+    <div class="lock-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <p>Finish Day 1 first!</p>
+      <span>🔒 Locked for now</span>
+    </div>
     <div class="section-head">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
       <div>
@@ -94,7 +107,12 @@
   </section>
 
   <!-- SECTION 4 -->
-  <section class="section" id="s4">
+  <section class="section" id="s4" data-requires="isc-d1-s1,isc-d1-s2,isc-d2-s1">
+    <div class="lock-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <p>Finish Section 3's quiz first!</p>
+      <span>🔒 Locked for now</span>
+    </div>
     <div class="section-head">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
       <div>
@@ -165,7 +183,12 @@
   </section>
 
   <!-- SECTION 5 -->
-  <section class="section" id="s5">
+  <section class="section" id="s5" data-requires="isc-d1-s1,isc-d1-s2,isc-d2-s1,isc-d2-s2">
+    <div class="lock-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <p>Finish Section 4's quiz first!</p>
+      <span>🔒 Locked for now</span>
+    </div>
     <div class="section-head">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></div>
       <div>
@@ -258,7 +281,7 @@
         'Skip verification to save time'
       ], answer: 1, explain: 'Cross-checking across independent sources is the core habit of reliable research.' },
     { type: 'tf', q: 'Skimming titles, snippets, and headers before reading full articles is a waste of time.', answer: false, explain: 'Skimming first helps you quickly identify which few sources are worth a close read.' }
-  ], { title: 'Section 3 Check', sub: 'Six quick questions on researching without relying on AI.', storageKey: 'isc-d2-s1' });
+  ], { title: 'Section 3 Check', sub: 'Get every question right to unlock Section 4!', storageKey: 'isc-d2-s1', nextId: 's4', nextLabel: 'Section 4' });
 
   mountQuiz('quiz-s4', [
     { type: 'fill', q: 'In the CRAAP test, the first "A" stands for ___ — who wrote or published the source.', answer: ['authority'], explain: 'Authority asks about the credentials and expertise behind the source.' },
@@ -282,7 +305,7 @@
         'Not worth evaluating further either way'
       ], answer: 1, explain: 'Sensational claims, no author, and no evidence are classic markers of a low-credibility source.' },
     { type: 'tf', q: 'Fact-checking organizations like Reuters Fact Check or FactCheck.org can help verify claims that really matter.', answer: true, explain: 'Independent fact-checkers are a useful second opinion for high-stakes claims.' }
-  ], { title: 'Section 4 Check', sub: 'Six quick questions on evaluating credible sources.', storageKey: 'isc-d2-s2' });
+  ], { title: 'Section 4 Check', sub: 'Get every question right to unlock Section 5!', storageKey: 'isc-d2-s2', nextId: 's5', nextLabel: 'Section 5' });
 
   mountQuiz('quiz-s5', [
     { type: 'tf', q: 'Anyone can propose an edit to a Wikipedia article.', answer: true, explain: 'Wikipedia is collaboratively edited, which is exactly why quality varies and cross-checking matters.' },
@@ -306,7 +329,7 @@
         'The article is sponsored content'
       ], answer: 2, explain: 'The bronze star marks Wikipedia\'s highest internal quality standard, "Featured Article."' },
     { type: 'tf', q: 'Checking a Wikipedia page\'s edit history can help you judge how stable or recently disputed the content is.', answer: true, explain: 'A page edited heavily in the last hour on a controversial topic deserves extra scrutiny.' }
-  ], { title: 'Section 5 Check', sub: 'Six quick questions on using Wikipedia and online encyclopedias well.', storageKey: 'isc-d2-s3' });
+  ], { title: 'Section 5 Check', sub: 'Get every question right to complete the course!', storageKey: 'isc-d2-s3' });
 </script>
 </body>
 </html>

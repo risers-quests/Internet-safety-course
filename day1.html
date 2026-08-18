@@ -30,7 +30,7 @@
     <p style="color:var(--ink-soft); max-width:640px;">Before you research anything, you need two things: the good sense to avoid online traps, and the search skills to actually find what you're looking for. That's today.</p>
     <div class="toc">
       <a href="#s1" data-complete-key="isc-d1-s1">1. Staying Safe Online</a>
-      <a href="#s2" data-complete-key="isc-d1-s2">2. Mastering Google Search</a>
+      <a href="#s2" data-complete-key="isc-d1-s2" data-requires="isc-d1-s1">2. Mastering Google Search</a>
     </div>
   </div>
 
@@ -133,7 +133,12 @@
   </section>
 
   <!-- SECTION 2 -->
-  <section class="section" id="s2">
+  <section class="section" id="s2" data-requires="isc-d1-s1">
+    <div class="lock-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <p>Finish Section 1's quiz first!</p>
+      <span>🔒 Locked for now</span>
+    </div>
     <div class="section-head">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
       <div>
@@ -256,7 +261,7 @@
         'Forward it to a friend so they can click it first'
       ], answer: 1, explain: 'Unsolicited "you won" messages are a classic scam pattern designed to create excitement and rush a click.' },
     { type: 'tf', q: 'A padlock icon and "https://" in the address bar guarantee that a website is completely trustworthy.', answer: false, explain: 'HTTPS only means the connection is encrypted — scam and phishing sites can (and often do) use HTTPS too.' }
-  ], { title: 'Section 1 Check', sub: 'Six quick questions on staying safe online.', storageKey: 'isc-d1-s1' });
+  ], { title: 'Section 1 Check', sub: 'Get every question right to unlock Section 2!', storageKey: 'isc-d1-s1', nextId: 's2', nextLabel: 'Section 2' });
 
   mountQuiz('quiz-s2', [
     { type: 'mcq', q: 'Which search will find pages containing the exact phrase "digital literacy"?', choices: [
@@ -280,7 +285,7 @@
         'site:.com photosynthesis'
       ], answer: 0, explain: 'Combining clear keywords with filetype:pdf targets exactly the format you want.' },
     { type: 'fill', q: 'Google\'s ___ menu, found just below the search box, lets you filter results by time range, like "past week."', answer: ['tools', 'tools menu'], explain: 'The Tools menu also lets you turn on "Verbatim" to stop Google from auto-correcting or broadening your search.' }
-  ], { title: 'Section 2 Check', sub: 'Six quick questions on searching Google effectively.', storageKey: 'isc-d1-s2' });
+  ], { title: 'Section 2 Check', sub: 'Get every question right to finish Day 1!', storageKey: 'isc-d1-s2', nextHref: 'day2.html', nextLabel: 'Day 2' });
 </script>
 </body>
 </html>

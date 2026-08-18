@@ -171,9 +171,24 @@ table.op-table code { background: #eef2ff; color: var(--blue-dark); padding: 2px
 .quiz-wrap .quiz-title svg { width: 22px; height: 22px; stroke: var(--amber); }
 .quiz-wrap .quiz-sub { color: var(--ink-soft); font-size: .88rem; margin-bottom: 18px; }
 
-.q-item { background: var(--paper-soft); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.quiz-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.quiz-progress-bar { flex: 1; height: 12px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.quiz-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--teal), var(--green)); transition: width .3s ease; border-radius: 999px; }
+.quiz-progress-label { font-weight: 700; font-size: .85rem; color: var(--ink-soft); white-space: nowrap; }
+
+.q-item { background: var(--paper-soft); border: 2px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; transition: border-color .15s, background .15s; }
+.q-item.solved { border-color: var(--green); background: #ecfdf5; }
+.q-item.shake { animation: shake .35s; }
 .q-item .q-num { font-weight: 800; font-size: .78rem; color: var(--blue); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.q-item.solved .q-num { color: var(--green); }
+.solved-check { font-size: .95rem; }
 .q-item .q-prompt { font-weight: 600; margin-bottom: 12px; }
+.btn-check {
+  margin-top: 12px; background: var(--blue); color: #fff; border: none; font-weight: 700;
+  padding: 9px 20px; border-radius: 10px; cursor: pointer; font-size: .88rem; font-family: var(--font-body);
+}
+.btn-check:hover { background: var(--blue-dark); }
+.match-status { margin-top: 10px; font-weight: 700; font-size: .85rem; color: var(--ink-soft); }
 .q-choices { display: grid; gap: 8px; }
 .q-choice {
   display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px;
@@ -213,10 +228,38 @@ table.op-table code { background: #eef2ff; color: var(--blue-dark); padding: 2px
 .q-feedback.right { background: #ecfdf5; color: #166534; }
 .q-feedback.wrong { background: #fef2f2; color: #991b1b; }
 
-.quiz-actions { display: flex; align-items: center; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
-.quiz-score { font-weight: 700; font-size: .95rem; }
-.quiz-score.pass { color: var(--green); }
-.quiz-score.fail { color: var(--red); }
+.quiz-complete {
+  display: none; margin-top: 22px; text-align: center; background: #ecfdf5; border: 2px dashed var(--green);
+  border-radius: 14px; padding: 22px;
+}
+.quiz-complete.show { display: block; animation: pop .3s ease; }
+.quiz-complete-msg { font-family: var(--font-head); font-weight: 700; font-size: 1.1rem; color: #166534; margin-bottom: 14px; }
+@keyframes pop { 0% { transform: scale(.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+/* Section locking */
+.section { position: relative; }
+.section.locked > *:not(.lock-overlay) { filter: blur(5px); pointer-events: none; user-select: none; }
+.lock-overlay {
+  display: none; position: absolute; inset: 0; z-index: 5; border-radius: var(--radius);
+  background: rgba(255,255,255,.82); flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 24px; gap: 10px;
+}
+.section.locked .lock-overlay { display: flex; }
+.lock-overlay svg { width: 46px; height: 46px; stroke: var(--amber); }
+.lock-overlay p { margin: 0; font-weight: 700; color: var(--ink); font-size: 1.05rem; max-width: 320px; }
+.lock-overlay span { color: var(--ink-soft); font-size: .88rem; }
+
+.toc a.locked { opacity: .55; cursor: not-allowed; }
+.toc a.locked:hover { color: var(--ink-soft); border-color: var(--border); }
+
+.day-lock-banner {
+  display: none; align-items: center; gap: 16px; background: #fff7ed; border: 2px dashed #f59e0b;
+  border-radius: 14px; padding: 18px 22px; margin: 0 0 28px;
+}
+.day-lock-banner svg { width: 34px; height: 34px; stroke: #b45309; flex: none; }
+.day-lock-banner strong { display: block; color: #92400e; font-size: 1.02rem; }
+.day-lock-banner p { margin: 4px 0 0; font-size: .9rem; color: #92400e; }
+.day-lock-banner a { color: #92400e; font-weight: 700; }
 
 /* Footer */
 .site-footer { text-align: center; padding: 40px 24px 60px; color: var(--ink-soft); font-size: .85rem; }

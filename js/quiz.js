@@ -1,4 +1,6 @@
-/* Lightweight quiz engine: supports mcq, tf, fill, match question types. */
+/* Kid-friendly quiz engine: mcq, tf, fill, match. Every question must be
+   answered correctly (retries allowed) before the quiz counts as done and
+   the next section unlocks. */
 (function () {
   function shuffle(arr) {
     const a = arr.slice();
@@ -20,12 +22,14 @@
     return e;
   }
 
+  var HINT_AFTER_TRIES = 3;
+
   class Quiz {
     constructor(container, questions, meta) {
       this.container = container;
       this.questions = questions;
       this.meta = meta || {};
-      this.state = questions.map(() => ({ selected: null, checked: false }));
+      this.state = questions.map(() => ({ selected: null, solved: false, tries: 0 }));
       this.matchState = questions.map((q) =>
         q.type === 'match'
           ? { order: shuffle(q.pairs.map((_, i) => i)), selectedTerm: null, matched: new Set() }
@@ -36,27 +40,42 @@
 
     build() {
       this.container.innerHTML = '';
-      const head = el('div', 'quiz-title', this.icon() + (this.meta.title || 'Check your understanding'));
-      this.container.appendChild(head);
-      this.container.appendChild(el('div', 'quiz-sub', this.meta.sub || 'Answer every question, then hit Check Answers.'));
+      this.container.appendChild(el('div', 'quiz-title', this.icon() + (this.meta.title || 'Show what you know!')));
+      this.container.appendChild(el('div', 'quiz-sub', this.meta.sub || 'Get every question right to unlock the next part. You can try as many times as you need!'));
+
+      const progress = el('div', 'quiz-progress');
+      const bar = el('div', 'quiz-progress-bar');
+      const fill = el('div', 'quiz-progress-fill');
+      bar.appendChild(fill);
+      const label = el('div', 'quiz-progress-label');
+      progress.appendChild(bar);
+      progress.appendChild(label);
+      this.container.appendChild(progress);
+      this.progressFill = fill;
+      this.progressLabel = label;
 
       this.questions.forEach((q, i) => this.container.appendChild(this.renderQuestion(q, i)));
 
-      const actions = el('div', 'quiz-actions');
-      const checkBtn = el('button', 'btn btn-primary', 'Check Answers');
-      checkBtn.type = 'button';
-      checkBtn.addEventListener('click', () => this.check());
-      const retryBtn = el('button', 'btn btn-ghost', 'Try Again');
-      retryBtn.type = 'button';
-      retryBtn.addEventListener('click', () => this.retry());
-      const score = el('span', 'quiz-score');
-      score.style.display = 'none';
-      actions.appendChild(checkBtn);
-      actions.appendChild(retryBtn);
-      actions.appendChild(score);
-      this.container.appendChild(actions);
-      this.scoreEl = score;
-      this.checkBtn = checkBtn;
+      const complete = el('div', 'quiz-complete');
+      const msg = el('div', 'quiz-complete-msg', '🎉 Awesome! You got every question right!');
+      complete.appendChild(msg);
+      if (this.meta.nextId || this.meta.nextHref) {
+        const nextBtn = el('button', 'btn btn-primary', (this.meta.nextLabel ? 'Continue to ' + this.meta.nextLabel : 'Continue') + ' →');
+        nextBtn.type = 'button';
+        nextBtn.addEventListener('click', () => {
+          if (this.meta.nextId) {
+            var nextEl = document.getElementById(this.meta.nextId);
+            if (nextEl) setTimeout(() => nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+          } else if (this.meta.nextHref) {
+            window.location.href = this.meta.nextHref;
+          }
+        });
+        complete.appendChild(nextBtn);
+      }
+      this.container.appendChild(complete);
+      this.completeBox = complete;
+
+      this.updateProgress();
     }
 
     icon() {
@@ -76,6 +95,20 @@
 
       const fb = el('div', 'q-feedback');
       wrap.appendChild(fb);
+      this._fbEls = this._fbEls || [];
+      this._fbEls[i] = fb;
+      this._wrapEls = this._wrapEls || [];
+      this._wrapEls[i] = wrap;
+
+      if (q.type === 'mcq' || q.type === 'tf' || q.type === 'fill') {
+        const btn = el('button', 'btn btn-check', 'Check');
+        btn.type = 'button';
+        btn.addEventListener('click', () => this.checkOne(i));
+        wrap.appendChild(btn);
+        this._btnEls = this._btnEls || [];
+        this._btnEls[i] = btn;
+      }
+
       return wrap;
     }
 
@@ -90,9 +123,9 @@
         item.appendChild(el('span', 'dot'));
         item.appendChild(el('span', null, c));
         item.addEventListener('click', () => {
-          if (this.state[i].checked) return;
+          if (this.state[i].solved) return;
           this.state[i].selected = ci;
-          box.querySelectorAll('.q-choice').forEach((n) => n.classList.remove('selected'));
+          box.querySelectorAll('.q-choice').forEach((n) => n.classList.remove('selected', 'incorrect'));
           item.classList.add('selected');
         });
         box.appendChild(item);
@@ -106,6 +139,9 @@
       input.type = 'text';
       input.placeholder = q.placeholder || 'Type your answer…';
       input.addEventListener('input', () => { this.state[i].selected = input.value; });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); this.checkOne(i); }
+      });
       box.appendChild(input);
       return box;
     }
@@ -116,6 +152,17 @@
       const termsCol = el('div', 'match-col');
       const defsCol = el('div', 'match-col');
       const defOrder = st.order;
+      const statusLine = el('div', 'match-status', 'Matched 0 of ' + q.pairs.length);
+
+      const updateStatus = () => {
+        statusLine.textContent = 'Matched ' + st.matched.size + ' of ' + q.pairs.length;
+        if (st.matched.size === q.pairs.length) {
+          statusLine.textContent = '✅ All matched — nice work!';
+          this.state[i].solved = true;
+          this.markSolved(i);
+          this.updateProgress();
+        }
+      };
 
       q.pairs.forEach((pair, ti) => {
         const t = el('div', 'match-item', pair[0]);
@@ -143,10 +190,7 @@
             termEl.classList.add('matched');
             d.classList.add('matched');
             st.selectedTerm = null;
-            if (st.matched.size === q.pairs.length) {
-              this.state[i].checked = true;
-              this.state[i].selected = 'complete';
-            }
+            updateStatus();
           } else {
             d.classList.add('shake');
             const termEl = termsCol.querySelector('[data-term="' + chosenTerm + '"]');
@@ -160,7 +204,10 @@
 
       box.appendChild(termsCol);
       box.appendChild(defsCol);
-      return box;
+      const outer = el('div');
+      outer.appendChild(box);
+      outer.appendChild(statusLine);
+      return outer;
     }
 
     isCorrect(q, i) {
@@ -176,63 +223,89 @@
       return false;
     }
 
-    check() {
-      let correct = 0;
-      this.questions.forEach((q, i) => {
-        const item = this.container.querySelectorAll('.q-item')[i];
-        const fb = item.querySelector('.q-feedback');
-        const ok = this.isCorrect(q, i);
-        this.state[i].checked = true;
-        if (ok) correct++;
+    checkOne(i) {
+      const q = this.questions[i];
+      const wrap = this._wrapEls[i];
+      const fb = this._fbEls[i];
+      const s = this.state[i];
+      if (s.solved) return;
 
-        if (q.type === 'mcq' || q.type === 'tf') {
-          const choiceNodes = item.querySelectorAll('.q-choice');
-          const correctIdx = q.type === 'tf' ? (q.answer === true ? 0 : 1) : q.answer;
-          choiceNodes.forEach((n, ci) => {
-            if (ci === correctIdx) n.classList.add('correct');
-            else if (n.classList.contains('selected') && ci !== correctIdx) n.classList.add('incorrect');
-          });
+      if ((q.type === 'mcq' || q.type === 'tf') && s.selected == null) {
+        fb.className = 'q-feedback show wrong';
+        fb.textContent = '👉 Pick an answer first!';
+        return;
+      }
+      if (q.type === 'fill' && (s.selected == null || String(s.selected).trim() === '')) {
+        fb.className = 'q-feedback show wrong';
+        fb.textContent = '👉 Type an answer first!';
+        return;
+      }
+
+      s.tries++;
+      const ok = this.isCorrect(q, i);
+
+      if (q.type === 'mcq' || q.type === 'tf') {
+        const choiceNodes = wrap.querySelectorAll('.q-choice');
+        choiceNodes.forEach((n, ci) => {
+          n.classList.remove('correct', 'incorrect');
+          if (ok && ci === s.selected) n.classList.add('correct');
+          if (!ok && ci === s.selected) n.classList.add('incorrect');
+        });
+      }
+      if (q.type === 'fill') {
+        const input = wrap.querySelector('input');
+        input.style.borderColor = ok ? 'var(--green)' : 'var(--red)';
+        if (!ok) { wrap.classList.add('shake'); setTimeout(() => wrap.classList.remove('shake'), 350); }
+      }
+
+      if (ok) {
+        s.solved = true;
+        this.markSolved(i);
+        fb.className = 'q-feedback show right';
+        fb.textContent = '✓ That\'s it! ' + (q.explain || '');
+        this.updateProgress();
+      } else {
+        fb.className = 'q-feedback show wrong';
+        let hint = '';
+        if (s.tries >= HINT_AFTER_TRIES) {
+          if (q.type === 'mcq') hint = ' Hint: the answer is "' + q.choices[q.answer] + '".';
+          if (q.type === 'tf') hint = ' Hint: the answer is ' + (q.answer ? 'True' : 'False') + '.';
+          if (q.type === 'fill') hint = ' Hint: try "' + q.answer[0] + '".';
         }
-        if (q.type === 'fill') {
-          const input = item.querySelector('input');
-          input.style.borderColor = ok ? 'var(--green)' : 'var(--red)';
-          input.disabled = true;
-        }
-
-        fb.classList.add('show', ok ? 'right' : 'wrong');
-        if (ok) {
-          fb.textContent = '✓ Correct. ' + (q.explain || '');
-        } else {
-          let correctText = '';
-          if (q.type === 'mcq') correctText = 'Correct answer: ' + q.choices[q.answer] + '. ';
-          if (q.type === 'tf') correctText = 'Correct answer: ' + (q.answer ? 'True' : 'False') + '. ';
-          if (q.type === 'fill') correctText = 'Correct answer: ' + q.answer[0] + '. ';
-          if (q.type === 'match') correctText = 'Finish matching all pairs. ';
-          fb.textContent = '✗ Not quite. ' + correctText + (q.explain || '');
-        }
-      });
-
-      const pct = Math.round((correct / this.questions.length) * 100);
-      this.scoreEl.style.display = 'inline';
-      this.scoreEl.textContent = 'Score: ' + correct + '/' + this.questions.length + ' (' + pct + '%)';
-      this.scoreEl.className = 'quiz-score ' + (pct >= 70 ? 'pass' : 'fail');
-      this.checkBtn.disabled = true;
-      this.checkBtn.style.opacity = '.6';
-
-      if (pct >= 70 && this.meta.storageKey) {
-        try { localStorage.setItem(this.meta.storageKey, '1'); } catch (e) {}
-        document.dispatchEvent(new CustomEvent('quiz-passed', { detail: { key: this.meta.storageKey } }));
+        fb.textContent = '🤔 Not quite — try again!' + hint;
+        if (q.type === 'fill') wrap.querySelector('input').focus();
       }
     }
 
-    retry() {
-      this.state = this.questions.map(() => ({ selected: null, checked: false }));
-      this.matchState = this.questions.map((q) =>
-        q.type === 'match'
-          ? { order: shuffle(q.pairs.map((_, i) => i)), selectedTerm: null, matched: new Set() }
-          : null
-      );
-      this.build();
+    markSolved(i) {
+      const wrap = this._wrapEls[i];
+      wrap.classList.add('solved');
+      const num = wrap.querySelector('.q-num');
+      if (num && !num.querySelector('.solved-check')) {
+        const chk = el('span', 'solved-check', ' ✅');
+        num.appendChild(chk);
+      }
+      const btn = this._btnEls && this._btnEls[i];
+      if (btn) { btn.disabled = true; btn.style.display = 'none'; }
+      wrap.querySelectorAll('input').forEach((n) => (n.disabled = true));
+    }
+
+    updateProgress() {
+      const solvedCount = this.state.filter((s) => s.solved).length;
+      const total = this.questions.length;
+      const pct = Math.round((solvedCount / total) * 100);
+      this.progressFill.style.width = pct + '%';
+      this.progressLabel.textContent = solvedCount + ' of ' + total + ' correct';
+
+      if (solvedCount === total) {
+        this.completeBox.classList.add('show');
+        if (this.meta.storageKey) {
+          try { localStorage.setItem(this.meta.storageKey, '1'); } catch (e) {}
+          document.dispatchEvent(new CustomEvent('quiz-passed', { detail: { key: this.meta.storageKey } }));
+        }
+      } else {
+        this.completeBox.classList.remove('show');
+      }
     }
   }
 
