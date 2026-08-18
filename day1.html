@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LifeHub Risers | Riser's Quest — Day 1</title>
+<title>LifeHub Risers | Riser's Quest — Part 1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -19,8 +19,8 @@
     </a>
     <nav class="main-nav">
       <a href="index.html">Home</a>
-      <a href="day1.html" class="active">Day 1</a>
-      <a href="day2.html">Day 2</a>
+      <a href="day1.html" class="active">Part 1</a>
+      <a href="day2.html">Part 2</a>
       <span class="progress-pill" data-progress-pill>0 / 6 complete</span>
     </nav>
   </div>
@@ -28,9 +28,9 @@
 
 <main class="container">
   <div class="day-hero">
-    <span class="tag">Day 1</span>
+    <span class="tag">Part 1</span>
     <h1>Missions 1 &amp; 2: The Adventure Begins</h1>
-    <p style="color:var(--ink-soft); max-width:640px;">Somewhere out there, a trickster is sending fake prize texts, and Leo's phone just buzzed. Time to suit up. Today's about 75 minutes, two missions: first you'll help Maya and Leo dodge every trick in the book, then turn Google into your personal search superpower. Your progress saves itself, so pause anytime. Ready, Riser?</p>
+    <p style="color:var(--ink-soft); max-width:640px;">Somewhere out there, a trickster is sending fake prize texts, and Leo's phone just buzzed. Time to suit up. Two missions, no clock running: first you'll help Maya and Leo dodge every trick in the book, then turn Google into your personal search superpower. Go at your own pace — your progress saves itself, so stop and pick up again whenever you like. Ready, Riser?</p>
     <div class="toc">
       <a href="#s1" data-complete-key="isc-d1-s1">🛡️ Mission 1: Dodge the Tricksters</a>
       <a href="#s2" data-complete-key="isc-d1-s2" data-requires="isc-d1-s1">🔍 Mission 2: Search Wizard</a>
@@ -281,10 +281,10 @@
     </div>
 
     <h3>Search tricks — your shortcuts</h3>
-    <p>These small symbols help Google understand exactly what you want, so you get better answers with less scrolling:</p>
+    <p>These small symbols help Google understand exactly what you want, so you get better answers with less scrolling. Open a search engine in another tab and try each one for real as you go:</p>
 
     <table class="op-table">
-      <thead><tr><th>Trick</th><th>What it does</th><th>Example</th></tr></thead>
+      <thead><tr><th>Trick</th><th>What it does</th><th>Try it yourself</th></tr></thead>
       <tbody>
         <tr><td><code>"..."</code></td><td>Find those exact words, in that exact order</td><td><code>"internet safety course"</code></td></tr>
         <tr><td><code>-word</code></td><td>Leave a word out of your results</td><td><code>jaguar -car</code></td></tr>
@@ -300,7 +300,7 @@
 
     <div class="callout example">
       <strong>Try it yourself</strong>
-      Looking for a downloadable report about online scams? Try: <code>online scams report filetype:pdf site:.gov</code>. That single search skips blogs and ads, and goes straight to official PDFs.
+      Looking for a printable one-page fact sheet about ocean animals? Try: <code>ocean animals fact sheet filetype:pdf</code>. That combines two tricks you just learned — clear keywords plus a file type filter — to jump straight to a printable page.
     </div>
 
     <details class="think-box">
@@ -400,10 +400,17 @@
 
     <div id="quiz-s2" class="quiz-wrap"></div>
   </section>
+
+  <section class="bonus-card">
+    <div class="bonus-icon" aria-hidden="true">🎮</div>
+    <h3>Bonus Round: Reality River</h3>
+    <p>Ready for one more challenge before you move on? Play Reality River, a free game from Google's Be Internet Awesome, where you decide what's real before crossing the river.</p>
+    <a class="btn btn-primary" href="https://beinternetawesome.withgoogle.com/en_in/interland/landing/reality-river" target="_blank" rel="noopener noreferrer">Play Reality River ↗</a>
+  </section>
 </main>
 
 <footer class="site-footer">
-  LifeHub Risers · Riser's Quest — Day 1 of 2. <a href="day2.html">Continue to Day 2 →</a>
+  LifeHub Risers · Riser's Quest — Part 1 of 2. <a href="day2.html">Continue to Part 2 →</a>
 </footer>
 
 <script src="js/player.js"></script>
@@ -505,7 +512,7 @@
         'It means nothing important'
       ], answer: 1, explain: 'Sponsored results are ads. They may still be useful, but being first doesn\'t mean most trustworthy.' },
     { type: 'tf', q: 'The short preview text under a search result\'s title is called a snippet.', answer: true, explain: 'Checking the snippet before clicking helps you judge whether a page actually answers your question.' }
-  ], { title: 'Mission 2 Checkpoint', sub: 'Answer every question. Get one wrong? Just try again and tell us your thinking!', storageKey: 'isc-d1-s2', nextHref: 'day2.html', nextLabel: 'Day 2' });
+  ], { title: 'Mission 2 Checkpoint', sub: 'Answer every question. Get one wrong? Just try again and tell us your thinking!', storageKey: 'isc-d1-s2', nextHref: 'day2.html', nextLabel: 'Part 2' });
 </script>
 </body>
 </html>

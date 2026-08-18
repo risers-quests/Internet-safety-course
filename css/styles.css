@@ -461,10 +461,20 @@ table.op-table code { background: #eef2ff; color: var(--blue-dark); padding: 2px
 
 .cert-actions { display: flex; justify-content: center; margin: 22px 0 6px; }
 
+/* Bonus game card */
+.bonus-card {
+  text-align: center; background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 60%, #fdf4ff 100%);
+  border: 3px dashed var(--purple);
+}
+.bonus-card .bonus-icon { font-size: 2.6rem; margin-bottom: 8px; }
+.bonus-card h3 { font-size: 1.35rem; margin-bottom: 8px; }
+.bonus-card p { max-width: 480px; margin: 0 auto 18px; color: var(--ink-soft); }
+
+#print-only-cert { display: none; }
 @media print {
-  body * { visibility: hidden; }
-  #cert-print-area, #cert-print-area * { visibility: visible; }
-  #cert-print-area { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 0; background: #fff; }
+  body.printing-cert > *:not(#print-only-cert) { display: none !important; }
+  body.printing-cert #print-only-cert { display: block; padding: 30px; }
+  body.printing-cert #print-only-cert .certificate { max-width: none; margin: 0 auto; }
 }
 
 /* Animated mini-scene (stands in for video) */

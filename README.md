@@ -1,24 +1,32 @@
 # LifeHub Risers — Riser's Quest
 
-A self-paced, pictorial, interactive 2-day quest built for LifeHub Risers,
-covering:
+A self-paced, pictorial, interactive quest built for LifeHub Risers, covering:
 
-**Day 1 — Missions 1 & 2** (about 75 minutes)
+**Part 1 — Missions 1 & 2**
 1. 🛡️ Dodge the Tricksters (passwords, tricky messages, strangers, malware, privacy)
 2. 🔍 Become a Search Wizard (search tricks, filters, reading results, quick answers)
 
-**Day 2 — Missions 3–5 & the Final Boss** (about 2 hours)
+**Part 2 — Missions 3–5 & the Final Boss**
 3. 💡 Go Full Detective (a research toolkit, what to avoid, what not to skip)
 4. ✅ Busted or Trusted? (the CRAAP test, checking sideways, spot-the-difference examples)
 5. 📖 Crack the Vault (how to use a trusted encyclopedia well, and why to still double-check)
-6. 🏆 The Final Boss Challenge — a rigorous 20-question assessment spanning both days
+6. 🏆 The Final Boss Challenge — a rigorous 20-question assessment, written fresh (not
+   copies of the mission checkpoint questions), spanning everything from both parts
 7. 🎓 Claim Your Reward — a printable certificate, unlocked by beating the Final Boss
+
+It's deliberately not chaptered by calendar day — "Part 1" and "Part 2" are just
+two pages for load-time reasons, not a schedule. There's no time-boxed "today
+you must finish X" framing anywhere; progress saves itself, so it's fine to
+stop mid-mission and resume days later.
 
 Each of the first 5 missions opens with a short interactive story starring two
 recurring characters, Maya and Leo (drawn as cartoon SVG characters, not
 emoji — see `js/characters.js`), has a looping CSS/SVG animated mini-scene
 (no video files needed), a glossary of new words, one or two "Think about it"
-scenarios, and ends with a mixed practice quiz.
+scenarios, and ends with a mixed practice quiz. A bonus game card appears at
+the end of each part, linking out to a relevant free game from Google's
+Be Internet Awesome (Reality River after Part 1, Tower of Treasure after the
+certificate in Part 2 — the latter locked until the certificate is earned).
 
 ## How the practice quizzes work (Missions 1–5)
 
@@ -36,29 +44,41 @@ browser (`localStorage`), so it survives closing the tab and coming back
 later — see "Continuing across devices" below for the one case that doesn't
 cover.
 
+If a mission is reopened after it's already done, it shows a compact
+"✅ already finished" summary instead of a blank quiz (with an optional
+"🔁 Redo for practice" button) — the underlying flag was never lost, only the
+old UI failed to reflect it.
+
 ## How the Final Boss Challenge works
 
-This one is graded for real, no reflection shortcut. All 20 questions are
-answered, then submitted together with one "Submit Final Assessment" button.
-The pass bar is a ratio — 80%, the same as 8 out of every 10 — applied to
-however many questions are in the pool (20 here, so 16 correct), not a fixed
-question count. Passing unlocks the certificate section immediately below;
-falling short shows the score and a "Try Again" button that resets the whole
-assessment for another attempt. See `js/assessment.js`.
+This one is graded for real, no reflection shortcut, and its 20 questions are
+written from scratch — not reused from the mission checkpoints — leaning on
+scenarios and application rather than recall, so passing it actually means
+something. All 20 are answered, then submitted together with one "Submit
+Final Assessment" button. The pass bar is a ratio — 80%, the same as 8 out of
+every 10 — applied to however many questions are in the pool (20 here, so 16
+correct), not a fixed question count. Passing unlocks the certificate section
+immediately below; falling short shows the score and a "Try Again" button
+that resets the whole assessment for another attempt. See `js/assessment.js`.
 
 ## The certificate
 
 Locked until the Final Boss Challenge is passed. Type a name and it fills
 into a styled certificate live (saved in `localStorage` so it's remembered on
 refresh), with today's date filled in automatically. The "Print / Save as
-PDF" button calls `window.print()`; a print stylesheet isolates just the
-certificate (`#cert-print-area`) so the rest of the page doesn't print.
+PDF" button calls `window.print()`. On `beforeprint`, the certificate markup
+is cloned into a fresh `#print-only-cert` div appended directly to `<body>`,
+and everything else is hidden via `display:none` on `<body>`'s other direct
+children — this avoids the classic `visibility:hidden` + `position:absolute`
+trick, which still lets hidden content occupy layout space and can leave the
+certificate spanning two printed pages. The clone is removed again on
+`afterprint`.
 
 ## Sharing one computer between kids (no login)
 
 If a classroom or family shares one computer, "🛡️ Mission 1" and every other
 mission is locked behind a "👋 Who's on this quest?" name prompt (see
-`js/player.js`) the first time anyone opens Day 1 or Day 2 on that browser.
+`js/player.js`) the first time anyone opens either part on that browser.
 Typing a name namespaces every progress key under it (`isc-d1-s1::Priya`
 instead of just `isc-d1-s1`), so a second kid can type their own name and get
 a completely clean slate on the same computer — nothing they see was unlocked
@@ -75,8 +95,8 @@ stops someone from typing any name, including someone else's. It solves
 
 Progress lives in `localStorage`, which is tied to one browser on one device
 — it already survives closing the tab, restarting the browser, or coming
-back the next day on the *same* device. It only breaks if a learner switches
-devices or browsers between Day 1 and Day 2.
+back later on the *same* device. It only breaks if a learner switches
+devices or browsers mid-quest.
 
 Real accounts (Google Sign-In or similar) would need a backend server plus
 real privacy/consent handling for a product aimed at kids — a lot of
@@ -121,8 +141,8 @@ No build step is required — it's plain HTML/CSS/JS.
 
 ```
 index.html         Course home page
-day1.html           Day 1 content + stories + quizzes (missions 1–2)
-day2.html           Day 2 content + stories + quizzes + Final Boss + certificate (missions 3–5, 6, 7)
+day1.html           Part 1 content + stories + quizzes (missions 1–2)
+day2.html           Part 2 content + stories + quizzes + Final Boss + certificate (missions 3–5, 6, 7)
 css/styles.css      Shared styling
 js/quiz.js          Practice quiz engine (mcq / true-false / fill-in / match + reflection)
 js/assessment.js    Final Boss engine (graded, pass/fail, retry)
@@ -131,3 +151,7 @@ js/story.js         Interactive story/comic-strip component
 js/player.js        Per-name progress namespacing (shared-computer support)
 js/app.js           Mission locking, progress tracking, and the cross-device sync widget
 ```
+
+The `day1.html` / `day2.html` filenames are kept for simplicity (nothing
+externally links to them by a different name), even though the visible text
+throughout says "Part 1" / "Part 2," not "Day."
